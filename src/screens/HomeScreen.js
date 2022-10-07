@@ -2,24 +2,68 @@ import React, { useState, useEffect } from 'react';
 import {View, StyleSheet} from 'react-native';
 import { Layout, Button, Text, Card } from '@ui-kitten/components';
 import io from 'socket.io-client';
+import * as Location from 'expo-location';
 
 import Spacer from '../components/Spacer';
 
 const HomeScreen = () => {   
     const [activated, setActivated] = useState(false);
+    const [intervalId, setIntervalId] = useState(0);
     const [socketEnabled, setSocketEnabled] = useState(false);
+    const [location, setLocation] = useState(null);
+    const [errorMsg, setErrorMsg] = useState(null);
 
-    const socket = io('http://localhost:3000');
+    async function getCurrentLocation() {
+        let { status } = await Location.requestForegroundPermissionsAsync();
+        if (status !== 'granted') {
+        setErrorMsg('Permission to access location was denied');
+        return;
+        }
+
+        let locco = await Location.getCurrentPositionAsync({});
+        setLocation(locco);
+    }
+
+    // const locInterval = setInterval(() => {
+    //     let loc = getCurrentLocation();
+    //     socket.emit('send_location', loc);
+    // }, 1000) }
+
+    // useEffect(() => {
+    //     (async () => {
+          
+    //       let { status } = await Location.requestForegroundPermissionsAsync();
+    //       if (status !== 'granted') {
+    //         setErrorMsg('Permission to access location was denied');
+    //         return;
+    //       }
+    
+    //       let location = await Location.getCurrentPositionAsync({});
+    //       console.log(location);
+    //       setLocation(location);
+    //     })();
+    //   }, []);
+
+    const [socket, setSocket] = useState(() => {
+        const socket = io('http://localhost:3000');
+        return socket;
+      });
 
     const connect = () => {
         socket.connect();
-    
         console.log('Connected');
-    }
+
+        const newIntervalId = setInterval(() => {
+            socket.emit('send_location', location);
+        }, 1000);
+        setIntervalId(newIntervalId) };
 
     const disconnect = () => {
+        clearInterval(intervalId);
+        setIntervalId(0);
         console.log('discon func')
         socket.disconnect();
+        
     }
 
     const handleOn = () => {
