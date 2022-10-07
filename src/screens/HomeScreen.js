@@ -1,18 +1,42 @@
 import React, { useState } from 'react';
 import {View, StyleSheet} from 'react-native';
 import { Layout, Button, Text, Card } from '@ui-kitten/components';
+import io from 'socket.io-client';
 
 import Spacer from '../components/Spacer';
 
 const HomeScreen = () => {
+    const socket = io('https://e191-188-72-191-15.eu.ngrok.io', {
+        autoConnect: false
+    });
     const [activated, setActivated] = useState(false);
+    const [socketEnabled, setSocketEnabled] = useState(false);
+
+    const connect = () => {
+        console.log('Connected');
+        socket.connect();
+    }
+
+    const disconnect = () => {
+        try {
+            socket.disconnect();
+        } catch (error) {
+            console.error(error);
+        }
+    }
 
     const handleOn = () => {
         setActivated(true);
+        setSocketEnabled(true);
+
+        connect();
     }
 
     const handleOff = () => {
         setActivated(false);
+        setSocketEnabled(false);
+
+        disconnect();
     }
 
     return (
