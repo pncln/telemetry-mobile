@@ -2,18 +2,34 @@ import React, { useState } from 'react';
 import {View, StyleSheet} from 'react-native';
 import { Layout, Button, Text, Card } from '@ui-kitten/components';
 
+import Spacer from '../components/Spacer';
 
 const HomeScreen = () => {
+    const [activated, setActivated] = useState(false);
+
+    const handleOn = () => {
+        setActivated(true);
+    }
+
+    const handleOff = () => {
+        setActivated(false);
+    }
+
     return (
         <Layout style={styles.layout}>
             <View style={styles.container}>
-                <Text style={styles.header}>
-                    Test
+                <Text style={styles.header} category='h4'>
+                    SERVER STATUS
                 </Text>
-                <View style={{ display: 'flex', justifyContent: 'right' }}>
-                    <Button>
+                <Spacer />
+                <Spacer />
+                <View>
+                    
+                    {activated ? <Button onPress={handleOff}>
                         ON
-                    </Button>
+                    </Button> : <Button status='danger' onPress={handleOn}>
+                        OFF
+                    </Button> }
                 </View>
             </View>
         </Layout>
