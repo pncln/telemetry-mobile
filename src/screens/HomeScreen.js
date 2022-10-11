@@ -10,7 +10,8 @@ const HomeScreen = () => {
     const [activated, setActivated] = useState(false);
     const [intervalId, setIntervalId] = useState(0);
     const [socketEnabled, setSocketEnabled] = useState(false);
-    const [location, setLocation] = useState(null);
+    let location = {};
+    let loc = {};
     const [errorMsg, setErrorMsg] = useState(null);
 
     async function getCurrentLocation() {
@@ -20,8 +21,7 @@ const HomeScreen = () => {
         return;
         }
 
-        let locco = await Location.getCurrentPositionAsync({});
-        setLocation(locco);
+        location = await Location.getCurrentPositionAsync({});
     }
 
     // const locInterval = setInterval(() => {
@@ -53,7 +53,9 @@ const HomeScreen = () => {
         socket.connect();
         console.log('Connected');
 
-        const newIntervalId = setInterval(() => {
+        const newIntervalId = setInterval(async () => {
+            await getCurrentLocation();
+            console.log(location)
             socket.emit('send_location', location);
         }, 1000);
         setIntervalId(newIntervalId) };
