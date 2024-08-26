@@ -86,7 +86,7 @@ const HomeScreen = () => {
         <Layout style={styles.layout}>
             <View style={styles.container}>
                 <Text style={styles.header} category='h4'>
-                    SERVER STATUS
+                    STATUS
                 </Text>
                 <Spacer />
                 <Spacer />
